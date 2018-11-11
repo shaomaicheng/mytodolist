@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'Todo.dart';
-import 'logger.dart';
 
 class ToDoItem extends StatefulWidget {
   ToDoItem({Key key, this.toDo}) : super(key: key);
@@ -36,9 +35,6 @@ class ToDoItemState extends State<ToDoItem> {
     // TODO: implement build
     return Container(
       child: Container(
-//        decoration: BoxDecoration(
-//          gradient: LinearGradient(colors: [Colors.blue, Colors.lightBlueAccent])
-//        ),
         margin: _cardTop(),
         child: Container(
           decoration: BoxDecoration(
@@ -51,11 +47,6 @@ class ToDoItemState extends State<ToDoItem> {
                     blurRadius: 3.0,
                     offset: Offset(0.0, 3.0))
               ]),
-//          elevation: 5.0,
-//          color: Colors.blue,
-//          shape: RoundedRectangleBorder(
-//            borderRadius: BorderRadius.all(Radius.circular(5.0))
-//          ),
           child: Column(
             children: <Widget>[
               // 点击把下面的详情部分收缩
@@ -137,7 +128,7 @@ class ToDoItemState extends State<ToDoItem> {
   }
 
   _cardTop() {
-    return EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0);
+    return EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0, bottom: 8.0);
   }
 
   CardBgColors _cardColor(ToDoStatus state) {
@@ -200,9 +191,13 @@ class _TodoItemDetailsState extends State<TodoItemDetails> with SingleTickerProv
       child: Opacity(
         opacity: _alpha(),
         child: Container(
-          margin: EdgeInsets.only(bottom: 16.0),
-          child: Text("details"),
           height: _height(),
+          child: Container(
+            height: 50.0,
+            color: Colors.red,
+            child: Container(
+            ),
+          ),
         ),
       ),
     );

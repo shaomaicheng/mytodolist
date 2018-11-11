@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
         title: new Text(widget.title),
       ),
-      body: new Center(
+      body: new Container(
         child: ListView.builder(
           itemCount: _todos.length,
           itemBuilder: (context, index) {
