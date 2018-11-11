@@ -17,7 +17,7 @@ createTodos() {
 
 class MyApp extends StatelessWidget {
   MyApp() {
-    Logger().init(false);
+    Logger().init(true);
   }
   // This widget is the root of your application.
   @override
