@@ -12,7 +12,6 @@ class ToDo {
 
 enum ToDoStatus {
   NO,
-  WAITING,
   DOING,
   FINISH
 }
