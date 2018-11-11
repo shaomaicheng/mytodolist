@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Todo.dart';
 import 'todoitem.dart';
+import 'logger.dart';
 
 void main() => runApp(new MyApp());
 
@@ -15,6 +16,9 @@ createTodos() {
 }
 
 class MyApp extends StatelessWidget {
+  MyApp() {
+    Logger().init(false);
+  }
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

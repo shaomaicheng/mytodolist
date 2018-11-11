@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'Todo.dart';
+import 'logger.dart';
 
 class ToDoItem extends StatefulWidget {
   ToDoItem({Key key, this.toDo}) : super(key: key);
@@ -23,7 +24,7 @@ class ToDoItemState extends State<ToDoItem> {
     // TODO: implement initState
     super.initState();
     setState(() {
-      print('this time: ${widget.toDo.time}');
+      Logger().log('this time: ${widget.toDo.time}');
       _todo = widget.toDo;
     });
   }
