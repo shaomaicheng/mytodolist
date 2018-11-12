@@ -27,7 +27,7 @@ class ToDoItemState extends State<ToDoItem> {
     setState(() {
       _todo = widget.toDo;
     });
-    _details = TodoItemDetails();
+    _details = TodoItemDetails(todo: _todo);
   }
 
   @override
@@ -39,8 +39,10 @@ class ToDoItemState extends State<ToDoItem> {
         child: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              gradient:
-                  LinearGradient(colors: [_cardColor(_todo.toDoStatus).startColor, _cardColor(_todo.toDoStatus).endColor]),
+              gradient: LinearGradient(colors: [
+                _cardColor(_todo.toDoStatus).startColor,
+                _cardColor(_todo.toDoStatus).endColor
+              ]),
               boxShadow: [
                 BoxShadow(
                     color: Colors.grey,
@@ -103,9 +105,7 @@ class ToDoItemState extends State<ToDoItem> {
                 ),
               ),
               // 可以展开的部分
-              Container(
-                child: _details
-              )
+              Container(child: _details)
             ],
           ),
         ),
@@ -120,11 +120,6 @@ class ToDoItemState extends State<ToDoItem> {
       _details.show();
     }
     showDetails = !showDetails;
-  }
-
-  _dateFormat(int time) {
-    return new DateFormat("yyyy:MM:dd:hh:mm:ss")
-        .format(DateTime.fromMillisecondsSinceEpoch(time));
   }
 
   _cardTop() {
@@ -151,9 +146,18 @@ class ToDoItemState extends State<ToDoItem> {
   }
 }
 
+_dateFormat(int time) {
+  return new DateFormat("yyyy:MM:dd:hh:mm:ss")
+      .format(DateTime.fromMillisecondsSinceEpoch(time));
+}
 
 class TodoItemDetails extends StatefulWidget {
   _TodoItemDetailsState _state;
+
+  ToDo todo;
+
+  TodoItemDetails({Key key, this.todo}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -170,32 +174,82 @@ class TodoItemDetails extends StatefulWidget {
   }
 }
 
-class _TodoItemDetailsState extends State<TodoItemDetails> with SingleTickerProviderStateMixin {
-
+class _TodoItemDetailsState extends State<TodoItemDetails>
+    with SingleTickerProviderStateMixin {
   Animatable<double> _heightAnimatable;
   Animatable<double> _alphaAnimatable;
   AnimationController _controller;
   Animation<double> _animation;
 
+  var animationStateListener;
+  var animationListener;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    animationStateListener = (status) {
+      var visiable = false;
+      switch (status) {
+        case AnimationStatus.forward:
+          visiable = true;
+          break;
+        case AnimationStatus.reverse:
+          break;
+        case AnimationStatus.completed:
+          break;
+        case AnimationStatus.dismissed:
+          visiable = false;
+          break;
+      }
+      setState(() {});
+    };
+    animationListener = () {
+      setState(() {});
+    };
     _initAnimation();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _controller.removeListener(animationListener);
+    _controller.removeStatusListener(animationStateListener);
+    if (_controller != null) {
+      _controller.dispose();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
-      child: Opacity(
-        opacity: _alpha(),
-        child: Container(
-          height: _height(),
-          child: Container(
-            height: 50.0,
-            color: Colors.red,
+      child: Offstage(
+        offstage: false,
+        child: Opacity(
+          opacity: _alpha(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minWidth: 0.0, minHeight: 0.0),
             child: Container(
+              color: Colors.red,
+              height: _height(),
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.only(left: 16.0),
+                    child: Text(
+                      _dateFormat(widget.todo.time),
+                      softWrap: false,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -211,11 +265,10 @@ class _TodoItemDetailsState extends State<TodoItemDetails> with SingleTickerProv
       vsync: this,
     );
     _heightAnimatable = Tween(begin: 0.0, end: 100.0);
-    _alphaAnimatable = Tween(begin: 0.1, end: 1.0);
+    _alphaAnimatable = Tween(begin: 0.0, end: 1.0);
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn)
-        ..addListener(() {
-          setState(() {});
-        });
+      ..addListener(animationListener)
+      ..addStatusListener(animationStateListener);
   }
 
   show() {
@@ -235,12 +288,9 @@ class _TodoItemDetailsState extends State<TodoItemDetails> with SingleTickerProv
   }
 }
 
-
 class CardBgColors {
   Color startColor;
   Color endColor;
 
   CardBgColors(this.startColor, this.endColor);
-
-
 }
