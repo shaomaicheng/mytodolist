@@ -200,66 +200,62 @@ class _TodoItemDetailsState extends State<TodoItemDetails>
 
   var animationListener;
 
+  bool _new = true;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     animationListener = () {
-      setState(() {});
+      setState(() {
+        if (!_new) {
+          return;
+        }
+        _new = false;
+      });
     };
     _initAnimation();
-    if (widget.todo.showDetails) {
-      show();
-    }
-  }
-
-  @override
-  void deactivate() {
-    // TODO: implement deactivate
-    super.deactivate();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
-    super.dispose();
     _controller.removeListener(animationListener);
     if (_controller != null) {
       _controller.dispose();
     }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+
     return Container(
-      child: Offstage(
-        offstage: false,
-        child: Opacity(
-          opacity: _alpha(),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minWidth: 0.0, minHeight: 0.0),
-            child: Container(
-              alignment: AlignmentDirectional.topStart,
-              margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
+      child: Opacity(
+        opacity: _alpha(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minWidth: 0.0, minHeight: 0.0),
+          child: Container(
+            alignment: AlignmentDirectional.topStart,
+            margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
 //              color: Colors.red,
-              height: _height(),
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(left: 16.0, top: 8.0),
-                    child: Text(
-                      "创建时间：" + _dateFormat(widget.todo.time),
-                      softWrap: false,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+            height: _height(),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(left: 16.0, top: 8.0),
+                  child: Text(
+                    "创建时间：" + _dateFormat(widget.todo.time),
+                    softWrap: false,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white,
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
           ),
         ),
@@ -274,10 +270,13 @@ class _TodoItemDetailsState extends State<TodoItemDetails>
       ),
       vsync: this,
     );
-    _heightAnimatable = Tween(begin: 0.0, end: 100.0);
+    _heightAnimatable = Tween(begin: 0.0, end: 40.0);
     _alphaAnimatable = Tween(begin: 0.0, end: 1.0);
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn)
       ..addListener(animationListener);
+    if (widget.todo.showDetails) {
+      show();
+    }
   }
 
   show() {
