@@ -28,6 +28,7 @@ class ToDoItemState extends State<ToDoItem> {
       _todo = widget.toDo;
     });
     _details = TodoItemDetails(todo: _todo);
+    showDetails = widget.toDo.showDetails;
   }
 
   @override
@@ -63,7 +64,8 @@ class ToDoItemState extends State<ToDoItem> {
                         Container(
                           margin: EdgeInsets.only(top: 8.0, left: 8.0),
                           child: Text(
-                            _dateFormat(_todo.time),
+//                            _dateFormat(_todo.time),
+                            _todoStatus(_todo.toDoStatus),
                             style: TextStyle(
                               fontSize: 14.0,
                               color: Colors.white,
@@ -114,12 +116,16 @@ class ToDoItemState extends State<ToDoItem> {
   }
 
   _showOrHideDetails() {
+    if (_details == null) {
+      return;
+    }
     if (showDetails) {
       _details.hide();
     } else {
       _details.show();
     }
     showDetails = !showDetails;
+    _todo.showDetails = showDetails;
   }
 
   _cardTop() {
@@ -149,6 +155,17 @@ class ToDoItemState extends State<ToDoItem> {
 _dateFormat(int time) {
   return new DateFormat("yyyy:MM:dd:hh:mm:ss")
       .format(DateTime.fromMillisecondsSinceEpoch(time));
+}
+
+_todoStatus(ToDoStatus status) {
+  switch (status) {
+    case ToDoStatus.NO:
+      return "还没开始";
+    case ToDoStatus.DOING:
+      return "正在进行";
+    case ToDoStatus.FINISH:
+      return "已完成";
+  }
 }
 
 class TodoItemDetails extends StatefulWidget {
@@ -181,33 +198,25 @@ class _TodoItemDetailsState extends State<TodoItemDetails>
   AnimationController _controller;
   Animation<double> _animation;
 
-  var animationStateListener;
   var animationListener;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    animationStateListener = (status) {
-      var visiable = false;
-      switch (status) {
-        case AnimationStatus.forward:
-          visiable = true;
-          break;
-        case AnimationStatus.reverse:
-          break;
-        case AnimationStatus.completed:
-          break;
-        case AnimationStatus.dismissed:
-          visiable = false;
-          break;
-      }
-      setState(() {});
-    };
     animationListener = () {
       setState(() {});
     };
     _initAnimation();
+    if (widget.todo.showDetails) {
+      show();
+    }
+  }
+
+  @override
+  void deactivate() {
+    // TODO: implement deactivate
+    super.deactivate();
   }
 
   @override
@@ -215,7 +224,6 @@ class _TodoItemDetailsState extends State<TodoItemDetails>
     // TODO: implement dispose
     super.dispose();
     _controller.removeListener(animationListener);
-    _controller.removeStatusListener(animationStateListener);
     if (_controller != null) {
       _controller.dispose();
     }
@@ -232,14 +240,16 @@ class _TodoItemDetailsState extends State<TodoItemDetails>
           child: ConstrainedBox(
             constraints: BoxConstraints(minWidth: 0.0, minHeight: 0.0),
             child: Container(
-              color: Colors.red,
+              alignment: AlignmentDirectional.topStart,
+              margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
+//              color: Colors.red,
               height: _height(),
               child: Row(
                 children: <Widget>[
                   Container(
-                    margin: EdgeInsets.only(left: 16.0),
+                    margin: EdgeInsets.only(left: 16.0, top: 8.0),
                     child: Text(
-                      _dateFormat(widget.todo.time),
+                      "创建时间：" + _dateFormat(widget.todo.time),
                       softWrap: false,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
@@ -267,8 +277,7 @@ class _TodoItemDetailsState extends State<TodoItemDetails>
     _heightAnimatable = Tween(begin: 0.0, end: 100.0);
     _alphaAnimatable = Tween(begin: 0.0, end: 1.0);
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn)
-      ..addListener(animationListener)
-      ..addStatusListener(animationStateListener);
+      ..addListener(animationListener);
   }
 
   show() {

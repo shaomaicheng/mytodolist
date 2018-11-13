@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
+
 import 'Todo.dart';
-import 'todoitem.dart';
 import 'logger.dart';
+import 'todoitem.dart';
 
 void main() => runApp(new MyApp());
 
 createTodos() {
   List<ToDo> todos = List<ToDo>();
-  todos.add(ToDo("写博客发文章", "关于架构的文章", ToDoStatus.NO, DateTime.now().millisecondsSinceEpoch));
-  todos.add(ToDo("去健身", "做够半小时的有氧", ToDoStatus.NO, DateTime.now().millisecondsSinceEpoch));
-  todos.add(ToDo("吃午饭", "点二十五块半的闷面", ToDoStatus.FINISH, DateTime.now().millisecondsSinceEpoch));
-  todos.add(ToDo("去盒马鲜生", "买水果", ToDoStatus.NO, DateTime.now().millisecondsSinceEpoch));
-  todos.add(ToDo("写flutter代码", "todolist的app啊", ToDoStatus.DOING, DateTime.now().millisecondsSinceEpoch));
+  todos.add(ToDo("写博客发文章", "关于架构的文章", ToDoStatus.NO,
+      DateTime.now().millisecondsSinceEpoch));
+  todos.add(ToDo(
+      "去健身", "做够半小时的有氧", ToDoStatus.NO, DateTime.now().millisecondsSinceEpoch));
+  todos.add(ToDo("吃午饭", "点二十五块半的闷面", ToDoStatus.FINISH,
+      DateTime.now().millisecondsSinceEpoch));
+  todos.add(ToDo(
+      "去盒马鲜生", "买水果", ToDoStatus.NO, DateTime.now().millisecondsSinceEpoch));
+  todos.add(ToDo("写flutter代码", "todolist的app啊", ToDoStatus.DOING,
+      DateTime.now().millisecondsSinceEpoch));
+  todos.add(ToDo("写Android代码", "ewt360的app啊", ToDoStatus.DOING,
+      DateTime.now().millisecondsSinceEpoch));
+  todos.add(ToDo("写golang代码", "ci啊", ToDoStatus.DOING,
+      DateTime.now().millisecondsSinceEpoch));
+  todos.add(ToDo("写音视频代码", "学习大鹏p7啊", ToDoStatus.DOING,
+      DateTime.now().millisecondsSinceEpoch));
   return todos;
 }
 
@@ -27,7 +39,10 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.deepOrange,
       ),
-      home: new MyHomePage(title: 'ToDoList', todos: createTodos(),),
+      home: new MyHomePage(
+        title: 'ToDoList',
+        todos: createTodos(),
+      ),
 //      debugShowCheckedModeBanner: false,
     );
   }
@@ -35,7 +50,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title, this.todos}) : super(key: key);
-
 
   final String title;
   final List<ToDo> todos;
@@ -45,7 +59,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   List<ToDo> _todos;
 
   @override
@@ -57,17 +70,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     return new Scaffold(
       appBar: new AppBar(
-
         title: new Text(widget.title),
       ),
       body: new Container(
         child: ListView.builder(
           itemCount: _todos.length,
           itemBuilder: (context, index) {
-            return ToDoItem(toDo: _todos[index],);
+            return ToDoItem(
+              toDo: _todos[index],
+            );
           },
         ),
       ),
