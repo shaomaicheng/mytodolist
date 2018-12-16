@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:todolist/src/Todo.dart';
+import 'package:todolist/src/logger.dart';
+import 'package:todolist/src/todoitem.dart';
 
-import 'Todo.dart';
-import 'logger.dart';
-import 'todoitem.dart';
 
 void main() => runApp(new MyApp());
 
@@ -50,6 +50,7 @@ class MyApp extends StatelessWidget {
         todos: createTodos(),
       ),
 //      debugShowCheckedModeBanner: false,
+//    showPerformanceOverlay: true,
     );
   }
 }

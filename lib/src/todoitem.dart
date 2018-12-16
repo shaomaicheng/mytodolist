@@ -55,7 +55,6 @@ class ToDoItemState extends State<ToDoItem> {
               // 点击把下面的详情部分收缩
               GestureDetector(
                 onTap: () {
-                  _showOrHideDetails();
                 },
                 child: Column(
                   children: <Widget>[
@@ -115,19 +114,6 @@ class ToDoItemState extends State<ToDoItem> {
     );
   }
 
-  _showOrHideDetails() {
-    if (_details == null) {
-      return;
-    }
-    if (showDetails) {
-      _details.hide();
-    } else {
-      _details.show();
-    }
-    showDetails = !showDetails;
-    _todo.showDetails = showDetails;
-  }
-
   _cardTop() {
     return EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0, bottom: 8.0);
   }
@@ -181,66 +167,20 @@ class TodoItemDetails extends StatefulWidget {
     _state = _TodoItemDetailsState();
     return _state;
   }
-
-  show() {
-    _state.show();
-  }
-
-  hide() {
-    _state.hide();
-  }
 }
 
-class _TodoItemDetailsState extends State<TodoItemDetails>
-    with SingleTickerProviderStateMixin {
-  Animatable<double> _heightAnimatable;
-  Animatable<double> _alphaAnimatable;
-  AnimationController _controller;
-  Animation<double> _animation;
-
-  var animationListener;
-
-  bool _new = true;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    animationListener = () {
-      setState(() {
-        if (!_new) {
-          return;
-        }
-        _new = false;
-      });
-    };
-    _initAnimation();
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    _controller.removeListener(animationListener);
-    if (_controller != null) {
-      _controller.dispose();
-    }
-    super.dispose();
-  }
+class _TodoItemDetailsState extends State<TodoItemDetails> {
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
 
     return Container(
-      child: Opacity(
-        opacity: _alpha(),
         child: ConstrainedBox(
           constraints: BoxConstraints(minWidth: 0.0, minHeight: 0.0),
           child: Container(
             alignment: AlignmentDirectional.topStart,
             margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
-//              color: Colors.red,
-            height: _height(),
             child: Row(
               children: <Widget>[
                 Container(
@@ -259,40 +199,7 @@ class _TodoItemDetailsState extends State<TodoItemDetails>
             ),
           ),
         ),
-      ),
     );
-  }
-
-  _initAnimation() {
-    _controller = AnimationController(
-      duration: const Duration(
-        milliseconds: 500,
-      ),
-      vsync: this,
-    );
-    _heightAnimatable = Tween(begin: 0.0, end: 40.0);
-    _alphaAnimatable = Tween(begin: 0.0, end: 1.0);
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn)
-      ..addListener(animationListener);
-    if (widget.todo.showDetails) {
-      show();
-    }
-  }
-
-  show() {
-    _controller.forward();
-  }
-
-  hide() {
-    _controller.reverse();
-  }
-
-  _alpha() {
-    return _alphaAnimatable.evaluate(_animation);
-  }
-
-  _height() {
-    return _heightAnimatable.evaluate(_animation);
   }
 }
 
