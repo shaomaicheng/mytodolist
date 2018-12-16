@@ -35,35 +35,35 @@ class ToDoItemState extends State<ToDoItem> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
-      child: Container(
-        margin: _cardTop(),
+      child: GestureDetector(
+        onTap: () {
+          _clickCard();
+        },
         child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              gradient: LinearGradient(colors: [
-                _cardColor(_todo.toDoStatus).startColor,
-                _cardColor(_todo.toDoStatus).endColor
-              ]),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 3.0,
-                    offset: Offset(0.0, 3.0))
-              ]),
-          child: Column(
-            children: <Widget>[
-              // 点击把下面的详情部分收缩
-              GestureDetector(
-                onTap: () {
-                },
-                child: Column(
+          margin: _cardTop(),
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                gradient: LinearGradient(colors: [
+                  _cardColor(_todo.toDoStatus).startColor,
+                  _cardColor(_todo.toDoStatus).endColor
+                ]),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.grey,
+                      blurRadius: 3.0,
+                      offset: Offset(0.0, 3.0))
+                ]),
+            child: Column(
+              children: <Widget>[
+                // 点击把下面的详情部分收缩
+                Column(
                   children: <Widget>[
                     Row(
                       children: <Widget>[
                         Container(
                           margin: EdgeInsets.only(top: 8.0, left: 8.0),
                           child: Text(
-//                            _dateFormat(_todo.time),
                             _todoStatus(_todo.toDoStatus),
                             style: TextStyle(
                               fontSize: 14.0,
@@ -104,10 +104,10 @@ class ToDoItemState extends State<ToDoItem> {
                     )
                   ],
                 ),
-              ),
-              // 可以展开的部分
-              Container(child: _details)
-            ],
+                // 可以展开的部分
+                Container(child: _details)
+              ],
+            ),
           ),
         ),
       ),
@@ -117,6 +117,8 @@ class ToDoItemState extends State<ToDoItem> {
   _cardTop() {
     return EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0, bottom: 8.0);
   }
+
+  _clickCard() {}
 
   CardBgColors _cardColor(ToDoStatus state) {
     CardBgColors colors;
@@ -170,35 +172,34 @@ class TodoItemDetails extends StatefulWidget {
 }
 
 class _TodoItemDetailsState extends State<TodoItemDetails> {
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
 
     return Container(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minWidth: 0.0, minHeight: 0.0),
-          child: Container(
-            alignment: AlignmentDirectional.topStart,
-            margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(left: 16.0, top: 8.0),
-                  child: Text(
-                    "创建时间：" + _dateFormat(widget.todo.time),
-                    softWrap: false,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minWidth: 0.0, minHeight: 0.0),
+        child: Container(
+          alignment: AlignmentDirectional.topStart,
+          margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
+          child: Row(
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(left: 16.0, top: 8.0),
+                child: Text(
+                  "创建时间：" + _dateFormat(widget.todo.time),
+                  softWrap: false,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.white,
                   ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ),
+      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todolist/src/Todo.dart';
+import 'package:todolist/src/add_todo.dart';
 import 'package:todolist/src/logger.dart';
 import 'package:todolist/src/todoitem.dart';
 
@@ -81,6 +82,18 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: new AppBar(
         title: new Text(widget.title),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _gotoAddTodo();
+        },
+        backgroundColor: Colors.deepOrange,
+        foregroundColor: Colors.white,
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        mini: false,
+      ),
       body: new Container(
         child: ListView.builder(
           itemCount: _todos.length,
@@ -92,5 +105,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  _gotoAddTodo() {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => AddTodoWidget()
+    ));
   }
 }
