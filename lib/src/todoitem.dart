@@ -18,7 +18,6 @@ class ToDoItem extends StatefulWidget {
 class ToDoItemState extends State<ToDoItem> {
   ToDo _todo;
   TodoItemDetails _details;
-  bool showDetails = false;
 
   @override
   void initState() {
@@ -28,7 +27,6 @@ class ToDoItemState extends State<ToDoItem> {
       _todo = widget.toDo;
     });
     _details = TodoItemDetails(todo: _todo);
-    showDetails = widget.toDo.showDetails;
   }
 
   @override

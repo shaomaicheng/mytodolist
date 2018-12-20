@@ -7,7 +7,41 @@ import 'package:todolist/src/todoitem.dart';
 
 void main() => runApp(new MyApp());
 
-createTodos() {
+class MyApp extends StatelessWidget {
+  MyApp() {
+    Logger().init(true);
+  }
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      title: 'ToDoList',
+      theme: new ThemeData(
+        primarySwatch: Colors.deepOrange,
+      ),
+      home: new MyHomePage(
+        title: 'ToDoList'
+      ),
+//      debugShowCheckedModeBanner: false,
+//    showPerformanceOverlay: true,
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+
+  final String title;
+  
+  MyHomePage({Key key, this.title}) : super(key: key);
+
+  @override
+  _MyHomePageState createState() => new _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  List<ToDo> _todos;
+
+  _loadTodos() async {
   List<ToDo> todos = List<ToDo>();
   todos.add(ToDo("写博客发文章", "关于架构的文章", ToDoStatus.NO,
       DateTime.now().millisecondsSinceEpoch));
@@ -31,49 +65,18 @@ createTodos() {
       DateTime.now().millisecondsSinceEpoch));
   todos.add(ToDo("写音视频代码", "学习大鹏p7啊", ToDoStatus.DOING,
       DateTime.now().millisecondsSinceEpoch));
-  return todos;
+
+      this.setState(() {
+        this._todos = todos;
+      });
 }
-
-class MyApp extends StatelessWidget {
-  MyApp() {
-    Logger().init(true);
-  }
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-      title: 'ToDoList',
-      theme: new ThemeData(
-        primarySwatch: Colors.deepOrange,
-      ),
-      home: new MyHomePage(
-        title: 'ToDoList',
-        todos: createTodos(),
-      ),
-//      debugShowCheckedModeBanner: false,
-//    showPerformanceOverlay: true,
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title, this.todos}) : super(key: key);
-
-  final String title;
-  final List<ToDo> todos;
-
-  @override
-  _MyHomePageState createState() => new _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  List<ToDo> _todos;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _todos = widget.todos;
+    this._todos = List();
+    _loadTodos();
   }
 
   @override
@@ -95,16 +98,24 @@ class _MyHomePageState extends State<MyHomePage> {
         mini: false,
       ),
       body: new Container(
-        child: ListView.builder(
+        child: _listView(),
+      ),
+    );
+  }
+
+  Widget _listView() {
+    if (this._todos != null && this._todos.length > 0) {
+        return ListView.builder(
           itemCount: _todos.length,
           itemBuilder: (context, index) {
             return ToDoItem(
               toDo: _todos[index],
             );
           },
-        ),
-      ),
-    );
+        );
+      } else {
+        return Container();
+      }
   }
 
   _gotoAddTodo() {
