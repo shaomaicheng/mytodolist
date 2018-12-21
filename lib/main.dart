@@ -46,9 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
     await TodoProvider().open('path_todo');
     todos.addAll(await TodoProvider().getTodos());
     this.setState(() {
-      todos.forEach((item){
-        print(item.toMap());
-      });
       this._todos = todos;
     });
   }
