@@ -1,6 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:todolist/src/Todo.dart';
 
-class AddTodoWidget extends StatelessWidget {
+class AddTodoWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _AddTodoState();
+  }
+}
+
+class _AddTodoState extends State<AddTodoWidget> {
+
+  String _title = '';
+  String _content = '';
+
+  _addTodoItem() {
+    var todo = ToDo(_title, _content, ToDoStatus.NO, DateTime.now().millisecondsSinceEpoch);
+    TodoProvider().insert(todo);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -14,14 +33,17 @@ class AddTodoWidget extends StatelessWidget {
               margin: EdgeInsets.only(top: 16.0),
               child: Column(
                 children: <Widget>[
-                  EditWithTipsWidget('标题', '请输入标题'),
-                  EditWithTipsWidget('内容', '请输入内容'),
+                  EditWithTipsWidget('标题', '请输入标题', (value){_title=value;}),
                   EditWithTipsWidget(
                     '详细描述',
                     '请输入详细描述',
+                        (value){_content = value;},
                     isTextArea: true,
                   ),
                   GestureDetector(
+                    onTap: () {
+                      _addTodoItem();
+                    },
                     child: Container(
                         child: Align(
                           alignment: Alignment.center,
@@ -29,7 +51,7 @@ class AddTodoWidget extends StatelessWidget {
                             '添加',
                             textAlign: TextAlign.center,
                             style:
-                                TextStyle(color: Colors.white, fontSize: 18.0),
+                            TextStyle(color: Colors.white, fontSize: 18.0),
                           ),
                         ),
                         margin: EdgeInsets.symmetric(
@@ -39,7 +61,7 @@ class AddTodoWidget extends StatelessWidget {
                         decoration: BoxDecoration(
                             color: Colors.deepOrange,
                             borderRadius:
-                                BorderRadius.all(Radius.circular(4.0)),
+                            BorderRadius.all(Radius.circular(4.0)),
                             shape: BoxShape.rectangle,
                             border: Border.all(color: Colors.deepOrange))),
                   ),
@@ -49,15 +71,18 @@ class AddTodoWidget extends StatelessWidget {
           ),
         ));
   }
+
 }
+
 
 class EditWithTipsWidget extends StatefulWidget {
   String tips;
   String hintText;
+  final ValueChanged<String> valueChanged;
   bool isTextArea = false;
   _EditWithTipsState _state;
 
-  EditWithTipsWidget(this.tips, this.hintText, {Key key, this.isTextArea})
+  EditWithTipsWidget(this.tips, this.hintText, this.valueChanged, {Key key, this.isTextArea})
       : super(key: key);
 
   @override
@@ -93,6 +118,7 @@ class _EditWithTipsState extends State<EditWithTipsWidget> {
                 decoration: InputDecoration(
                     hintText: widget.hintText, border: OutlineInputBorder()),
                 style: TextStyle(color: Colors.black),
+                onChanged: widget.valueChanged,
               )),
         ],
       ),

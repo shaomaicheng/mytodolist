@@ -42,34 +42,16 @@ class _MyHomePageState extends State<MyHomePage> {
   List<ToDo> _todos;
 
   _loadTodos() async {
-  List<ToDo> todos = List<ToDo>();
-  todos.add(ToDo("写博客发文章", "关于架构的文章", ToDoStatus.NO,
-      DateTime.now().millisecondsSinceEpoch));
-  todos.add(ToDo(
-      "去健身", "做够半小时的有氧", ToDoStatus.NO, DateTime.now().millisecondsSinceEpoch));
-  todos.add(ToDo("吃午饭", "点二十五块半的闷面", ToDoStatus.FINISH,
-      DateTime.now().millisecondsSinceEpoch));
-  todos.add(ToDo(
-      "去盒马鲜生", "买水果", ToDoStatus.NO, DateTime.now().millisecondsSinceEpoch));
-  todos.add(ToDo("写flutter代码", "todolist的app啊", ToDoStatus.DOING,
-      DateTime.now().millisecondsSinceEpoch));
-  todos.add(ToDo("写Android代码", "ewt360的app啊", ToDoStatus.DOING,
-      DateTime.now().millisecondsSinceEpoch));
-  todos.add(ToDo("写golang代码", "ci啊", ToDoStatus.DOING,
-      DateTime.now().millisecondsSinceEpoch));
-  todos.add(ToDo("写音视频代码", "学习大鹏p7啊", ToDoStatus.DOING,
-      DateTime.now().millisecondsSinceEpoch));
-  todos.add(ToDo("写音视频代码", "学习大鹏p7啊", ToDoStatus.DOING,
-      DateTime.now().millisecondsSinceEpoch));
-  todos.add(ToDo("写音视频代码", "学习大鹏p7啊", ToDoStatus.DOING,
-      DateTime.now().millisecondsSinceEpoch));
-  todos.add(ToDo("写音视频代码", "学习大鹏p7啊", ToDoStatus.DOING,
-      DateTime.now().millisecondsSinceEpoch));
-
-      this.setState(() {
-        this._todos = todos;
+    List<ToDo> todos = List<ToDo>();
+    await TodoProvider().open('path_todo');
+    todos.addAll(await TodoProvider().getTodos());
+    this.setState(() {
+      todos.forEach((item){
+        print(item.toMap());
       });
-}
+      this._todos = todos;
+    });
+  }
 
   @override
   void initState() {
@@ -114,7 +96,9 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         );
       } else {
-        return Container();
+        return Center(
+          child: Text("暂时没有数据哦"),
+        );
       }
   }
 
