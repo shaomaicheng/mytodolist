@@ -16,18 +16,6 @@ class ToDoItem extends StatefulWidget {
 }
 
 class ToDoItemState extends State<ToDoItem> {
-  ToDo _todo;
-  TodoItemDetails _details;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    setState(() {
-      _todo = widget.toDo;
-    });
-    _details = TodoItemDetails(todo: _todo);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +31,8 @@ class ToDoItemState extends State<ToDoItem> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(5.0)),
                 gradient: LinearGradient(colors: [
-                  _cardColor(_todo.toDoStatus).startColor,
-                  _cardColor(_todo.toDoStatus).endColor
+                  _cardColor(widget.toDo.toDoStatus).startColor,
+                  _cardColor(widget.toDo.toDoStatus).endColor
                 ]),
                 boxShadow: [
                   BoxShadow(
@@ -62,7 +50,7 @@ class ToDoItemState extends State<ToDoItem> {
                         Container(
                           margin: EdgeInsets.only(top: 8.0, left: 8.0),
                           child: Text(
-                            _todoStatus(_todo.toDoStatus),
+                            _todoStatus(widget.toDo.toDoStatus),
                             style: TextStyle(
                               fontSize: 14.0,
                               color: Colors.white,
@@ -77,7 +65,7 @@ class ToDoItemState extends State<ToDoItem> {
                       child: Row(
                         children: <Widget>[
                           Text(
-                            _todo.title,
+                            widget.toDo.title,
                             textAlign: TextAlign.left,
                             style: TextStyle(
                                 color: Colors.white,
@@ -86,7 +74,7 @@ class ToDoItemState extends State<ToDoItem> {
                           ),
                           Container(
                             child: Text(
-                              _todo.text,
+                              widget.toDo.text,
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                 color: Colors.white,
@@ -103,7 +91,7 @@ class ToDoItemState extends State<ToDoItem> {
                   ],
                 ),
                 // 可以展开的部分
-                Container(child: _details)
+                Container(child: TodoItemDetails(todo: widget.toDo))
               ],
             ),
           ),
