@@ -1,7 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:todolist/src/Todo.dart';
 
-class AddTodoWidget extends StatefulWidget {
+class AddTodoWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('添加一条Todo'),
+      ),
+      body: Container(
+        child: _AddTodoWidget(),
+      ),
+    );
+  }
+}
+
+class _AddTodoWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -9,80 +24,96 @@ class AddTodoWidget extends StatefulWidget {
   }
 }
 
-class _AddTodoState extends State<AddTodoWidget> {
-
+class _AddTodoState extends State<_AddTodoWidget> {
   String _title = '';
   String _content = '';
+  GlobalKey _formKey = new GlobalKey<FormState>();
 
-  _addTodoItem() {
-    var todo = ToDo(_title, _content, ToDoStatus.NO, DateTime.now().millisecondsSinceEpoch);
-    TodoProvider().insert(todo);
+  _addTodoItem(BuildContext context) {
+    if ((_formKey.currentState as FormState).validate()) {
+      var todo = ToDo(
+          _title, _content, ToDoStatus.NO, DateTime.now().millisecondsSinceEpoch);
+      TodoProvider().insert(todo).then((todo) {
+        Scaffold.of(context).showSnackBar(SnackBar(content: Text('添加成功')));
+      }, onError: () {
+        Scaffold.of(context).showSnackBar(SnackBar(content: Text('添加失败')));
+      }).whenComplete(() {
+        Future.delayed(Duration(seconds: 1), () {
+          Navigator.of(context).pop();
+        });
+      });
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('添加一条Todo'),
-        ),
-        body: Container(
-          child: SingleChildScrollView(
-            child: Container(
-              margin: EdgeInsets.only(top: 16.0),
-              child: Column(
-                children: <Widget>[
-                  EditWithTipsWidget('标题', '请输入标题', (value){_title=value;}),
-                  EditWithTipsWidget(
-                    '详细描述',
-                    '请输入详细描述',
-                        (value){_content = value;},
-                    isTextArea: true,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      _addTodoItem();
-                    },
-                    child: Container(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            '添加',
-                            textAlign: TextAlign.center,
-                            style:
-                            TextStyle(color: Colors.white, fontSize: 18.0),
-                          ),
+    return Container(
+        child: SingleChildScrollView(
+      child: Container(
+          margin: EdgeInsets.only(top: 16.0),
+          child: Form(
+            autovalidate: true,
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                EditWithTipsWidget('标题', '请输入标题', (value) {
+                  _title = value;
+                }, (value) {
+                  return value.trim().length > 0 ? null : '请输入标题';
+                }),
+                EditWithTipsWidget(
+                  '详细描述',
+                  '请输入详细描述',
+                  (value) {
+                    _content = value;
+                  },
+                  (value) {
+                    return value.trim().length > 0 ? null : '请输入详细描述';
+                  },
+                  isTextArea: true,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    _addTodoItem(context);
+                  },
+                  child: Container(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          '添加',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white, fontSize: 18.0),
                         ),
-                        margin: EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 16.0),
-                        height: 44.0,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                            color: Colors.deepOrange,
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(4.0)),
-                            shape: BoxShape.rectangle,
-                            border: Border.all(color: Colors.deepOrange))),
-                  ),
-                ],
-              ),
+                      ),
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+                      height: 44.0,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                          color: Colors.deepOrange,
+                          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                          shape: BoxShape.rectangle,
+                          border: Border.all(color: Colors.deepOrange))),
+                ),
+              ],
             ),
-          ),
-        ));
+          )),
+    ));
   }
-
 }
-
 
 class EditWithTipsWidget extends StatefulWidget {
   String tips;
   String hintText;
   final ValueChanged<String> valueChanged;
   bool isTextArea = false;
+  final FormFieldValidator formFieldValidator;
   _EditWithTipsState _state;
 
-  EditWithTipsWidget(this.tips, this.hintText, this.valueChanged, {Key key, this.isTextArea})
+  EditWithTipsWidget(
+      this.tips, this.hintText, this.valueChanged, this.formFieldValidator,
+      {Key key, this.isTextArea})
       : super(key: key);
 
   @override
@@ -113,12 +144,13 @@ class _EditWithTipsState extends State<EditWithTipsWidget> {
           ),
           Container(
               margin: EdgeInsets.only(left: 16.0, top: 8.0, right: 8.0),
-              child: TextField(
+              child: TextFormField(
                 maxLines: _maxLines(),
                 decoration: InputDecoration(
                     hintText: widget.hintText, border: OutlineInputBorder()),
                 style: TextStyle(color: Colors.black),
-                onChanged: widget.valueChanged,
+                onFieldSubmitted: widget.valueChanged,
+                validator: widget.formFieldValidator,
               )),
         ],
       ),
