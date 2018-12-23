@@ -1,9 +1,10 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:todolist/src/Todo.dart';
 import 'package:todolist/src/add_todo.dart';
+import 'package:todolist/src/events.dart';
 import 'package:todolist/src/logger.dart';
 import 'package:todolist/src/todoitem.dart';
-
 
 void main() => runApp(new MyApp());
 
@@ -19,9 +20,7 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.deepOrange,
       ),
-      home: new MyHomePage(
-        title: 'ToDoList'
-      ),
+      home: new MyHomePage(title: 'ToDoList'),
 //      debugShowCheckedModeBanner: false,
 //    showPerformanceOverlay: true,
     );
@@ -29,9 +28,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-
   final String title;
-  
+
   MyHomePage({Key key, this.title}) : super(key: key);
 
   @override
@@ -50,11 +48,21 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  _registerEvents() {
+    EventBus eventBus = EventBusManager.instance.eventBus();
+    eventBus.on<AddItemSuccessEvent>().listen((event) {
+      setState(() {
+        this._todos.insert(0, event.todo);
+      });
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     this._todos = List();
+    _registerEvents();
     _loadTodos();
   }
 
@@ -84,24 +92,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _listView() {
     if (this._todos != null && this._todos.length > 0) {
-        return ListView.builder(
-          itemCount: _todos.length,
-          itemBuilder: (context, index) {
-            return ToDoItem(
-              toDo: _todos[index],
-            );
-          },
-        );
-      } else {
-        return Center(
-          child: Text("暂时没有数据哦"),
-        );
-      }
+      return ListView.builder(
+        itemCount: _todos.length,
+        itemBuilder: (context, index) {
+          return ToDoItem(
+            toDo: _todos[index],
+          );
+        },
+      );
+    } else {
+      return Center(
+        child: Text("暂时没有数据哦"),
+      );
+    }
   }
 
   _gotoAddTodo() {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) => AddTodoWidget()
-    ));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => AddTodoWidget()));
   }
 }

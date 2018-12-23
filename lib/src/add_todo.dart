@@ -1,10 +1,11 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:todolist/src/Todo.dart';
+import 'package:todolist/src/events.dart';
 
 class AddTodoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: Text('添加一条Todo'),
@@ -19,7 +20,6 @@ class AddTodoWidget extends StatelessWidget {
 class _AddTodoWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _AddTodoState();
   }
 }
@@ -31,10 +31,12 @@ class _AddTodoState extends State<_AddTodoWidget> {
 
   _addTodoItem(BuildContext context) {
     if ((_formKey.currentState as FormState).validate()) {
-      var todo = ToDo(
-          _title, _content, ToDoStatus.NO, DateTime.now().millisecondsSinceEpoch);
+      var todo = ToDo(_title, _content, ToDoStatus.NO,
+          DateTime.now().millisecondsSinceEpoch);
       TodoProvider().insert(todo).then((todo) {
         Scaffold.of(context).showSnackBar(SnackBar(content: Text('添加成功')));
+        EventBus eventBus = EventBusManager.instance.eventBus();
+        eventBus.fire(AddItemSuccessEvent(todo));
       }, onError: () {
         Scaffold.of(context).showSnackBar(SnackBar(content: Text('添加失败')));
       }).whenComplete(() {
@@ -47,7 +49,6 @@ class _AddTodoState extends State<_AddTodoWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
         child: SingleChildScrollView(
       child: Container(
@@ -59,7 +60,6 @@ class _AddTodoState extends State<_AddTodoWidget> {
               children: <Widget>[
                 EditWithTipsWidget('标题', '请输入标题', (value) {
                   _title = value;
-                }, (value) {
                   return value.trim().length > 0 ? null : '请输入标题';
                 }),
                 EditWithTipsWidget(
@@ -67,8 +67,6 @@ class _AddTodoState extends State<_AddTodoWidget> {
                   '请输入详细描述',
                   (value) {
                     _content = value;
-                  },
-                  (value) {
                     return value.trim().length > 0 ? null : '请输入详细描述';
                   },
                   isTextArea: true,
@@ -106,20 +104,17 @@ class _AddTodoState extends State<_AddTodoWidget> {
 class EditWithTipsWidget extends StatefulWidget {
   String tips;
   String hintText;
-  final ValueChanged<String> valueChanged;
   bool isTextArea = false;
   final FormFieldValidator formFieldValidator;
   _EditWithTipsState _state;
 
-  EditWithTipsWidget(
-      this.tips, this.hintText, this.valueChanged, this.formFieldValidator,
+  EditWithTipsWidget(this.tips, this.hintText, this.formFieldValidator,
       {Key key, this.isTextArea})
       : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
     _state = new _EditWithTipsState();
-    // TODO: implement createState
     return _state;
   }
 }
@@ -129,7 +124,6 @@ class _EditWithTipsState extends State<EditWithTipsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
       margin: EdgeInsets.only(top: 8.0),
       child: Column(
@@ -149,7 +143,6 @@ class _EditWithTipsState extends State<EditWithTipsWidget> {
                 decoration: InputDecoration(
                     hintText: widget.hintText, border: OutlineInputBorder()),
                 style: TextStyle(color: Colors.black),
-                onFieldSubmitted: widget.valueChanged,
                 validator: widget.formFieldValidator,
               )),
         ],
