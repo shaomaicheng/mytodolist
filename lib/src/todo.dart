@@ -100,6 +100,11 @@ class TodoProvider {
     return todo;
   }
 
+  Future<int> delete(ToDo todo) async {
+    int row = await db.delete(tableTodo, where: '$columnId = ?', whereArgs: [todo.id]);
+    return row;
+  }
+
   Future<ToDo> getTodo(int id) async {
     List<Map> maps = await db.query(tableTodo,
         columns: [

@@ -1,6 +1,6 @@
 
 import 'package:event_bus/event_bus.dart';
-import 'package:todolist/src/Todo.dart';
+import 'package:todolist/src/todo.dart';
 
 class EventBusManager {
   EventBus _eventBus;

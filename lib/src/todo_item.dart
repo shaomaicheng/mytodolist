@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'Todo.dart';
+import 'todo.dart';
 
 class ToDoItem extends StatefulWidget {
-  ToDoItem({Key key, this.toDo}) : super(key: key);
+  final GestureLongPressCallback gestureLongPressCallback;
+  ToDoItem({Key key, this.toDo, this.gestureLongPressCallback}) : super(key: key);
 
   ToDo toDo;
 
@@ -24,6 +25,9 @@ class ToDoItemState extends State<ToDoItem> {
       child: GestureDetector(
         onTap: () {
           _clickCard();
+        },
+        onLongPress: () {
+          widget.gestureLongPressCallback();
         },
         child: Container(
           margin: _cardTop(),

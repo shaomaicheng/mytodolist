@@ -1,6 +1,6 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
-import 'package:todolist/src/Todo.dart';
+import 'package:todolist/src/todo.dart';
 import 'package:todolist/src/events.dart';
 
 class AddTodoWidget extends StatelessWidget {

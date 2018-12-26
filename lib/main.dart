@@ -1,10 +1,10 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
-import 'package:todolist/src/Todo.dart';
+import 'package:todolist/src/todo.dart';
 import 'package:todolist/src/add_todo.dart';
 import 'package:todolist/src/events.dart';
 import 'package:todolist/src/logger.dart';
-import 'package:todolist/src/todoitem.dart';
+import 'package:todolist/src/todo_item.dart';
 
 void main() => runApp(new MyApp());
 
@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
   MyApp() {
     Logger().init(true);
   }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -90,6 +91,47 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  // 删除提示
+  _tipShowDelete(BuildContext buildContext, ToDo todo) {
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) {
+          return AlertDialog(
+            content: Container(
+              child: Text('是否删除这条记录?'),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('确定'),
+                onPressed: () {
+                  _delete(buildContext, todo);
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text('取消'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  // 删除
+  _delete(BuildContext context, ToDo todo) {
+    TodoProvider().delete(todo).then((v) {
+      setState(() {
+        this._todos.remove(todo);
+      });
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text('删除成功')));
+    }).catchError(() {
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text('删除失败')));
+    });
+  }
+
   Widget _listView() {
     if (this._todos != null && this._todos.length > 0) {
       return ListView.builder(
@@ -100,29 +142,27 @@ class _MyHomePageState extends State<MyHomePage> {
             background: Container(
                 color: Colors.red,
                 child: Align(
-                alignment: Alignment.centerRight,
-                child: Container(
-                  margin: EdgeInsets.only(right: 24.0),
-                  child: Text(
-                      '删除',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                )
-              )
-            ),
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      margin: EdgeInsets.only(right: 24.0),
+                      child: Text(
+                        '删除',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ))),
             key: Key(_todos[index].hashCode.toString()),
             child: ToDoItem(
               toDo: _todos[index],
+              gestureLongPressCallback: () {
+                _tipShowDelete(context, _todos[index]);
+              },
             ),
             onDismissed: (direction) {
-              Scaffold.of(context).showSnackBar(
-                SnackBar(
-                    content: Text('删除成功')
-                )
-              );
+              Scaffold.of(context)
+                  .showSnackBar(SnackBar(content: Text('删除成功')));
               setState(() {
                 this._todos.remove(_todos[index]);
               });
