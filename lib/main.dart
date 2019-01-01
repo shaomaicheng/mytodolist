@@ -136,37 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return ListView.builder(
         itemCount: _todos.length,
         itemBuilder: (context, index) {
-          return Dismissible(
-            direction: DismissDirection.endToStart,
-            background: Container(
-                color: Colors.red,
-                child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      margin: EdgeInsets.only(right: 24.0),
-                      child: Text(
-                        '删除',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                    ))),
-            key: Key(_todos[index].hashCode.toString()),
-            child: ToDoItem(
-              toDo: _todos[index],
-              gestureLongPressCallback: () {
-                _tipShowDelete(context, _todos[index]);
-              },
-            ),
-            onDismissed: (direction) {
-              Scaffold.of(context)
-                  .showSnackBar(SnackBar(content: Text('删除成功')));
-              setState(() {
-                this._todos.remove(_todos[index]);
-              });
-            },
-          );
+          return _todoItemWidget(index);
         },
       );
     } else {
@@ -179,5 +149,47 @@ class _MyHomePageState extends State<MyHomePage> {
   _gotoAddTodo() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => AddTodoWidget()));
+  }
+
+  _todoItemWidget(int index) {
+    return ToDoItem(
+      toDo: _todos[index],
+      gestureLongPressCallback: () {
+        _tipShowDelete(context, _todos[index]);
+      },
+    );
+  }
+
+  _todoItemWidgetWithDismissible(int index) {
+    return Dismissible(
+      direction: DismissDirection.endToStart,
+      background: Container(
+          color: Colors.red,
+          child: Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                margin: EdgeInsets.only(right: 24.0),
+                child: Text(
+                  '删除',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.0,
+                  ),
+                ),
+              ))),
+      key: Key(_todos[index].hashCode.toString()),
+      child: ToDoItem(
+        toDo: _todos[index],
+        gestureLongPressCallback: () {
+          _tipShowDelete(context, _todos[index]);
+        },
+      ),
+      onDismissed: (direction) {
+        Scaffold.of(context).showSnackBar(SnackBar(content: Text('删除成功')));
+        setState(() {
+          this._todos.remove(_todos[index]);
+        });
+      },
+    );
   }
 }
