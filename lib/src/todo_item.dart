@@ -11,7 +11,6 @@ class ToDoItem extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return ToDoItemState();
   }
 }
@@ -20,7 +19,6 @@ class ToDoItemState extends State<ToDoItem> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
       child: GestureDetector(
         onTap: () {
@@ -155,7 +153,6 @@ class TodoItemDetails extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     _state = _TodoItemDetailsState();
     return _state;
   }
@@ -164,8 +161,6 @@ class TodoItemDetails extends StatefulWidget {
 class _TodoItemDetailsState extends State<TodoItemDetails> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-
     return Container(
       child: ConstrainedBox(
         constraints: BoxConstraints(minWidth: 0.0, minHeight: 0.0),

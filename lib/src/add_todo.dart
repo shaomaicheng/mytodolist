@@ -120,8 +120,6 @@ class EditWithTipsWidget extends StatefulWidget {
 }
 
 class _EditWithTipsState extends State<EditWithTipsWidget> {
-  String _inputContent;
-
   @override
   Widget build(BuildContext context) {
     return Container(
