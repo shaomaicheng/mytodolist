@@ -5,6 +5,7 @@ import 'package:todolist/src/add_todo.dart';
 import 'package:todolist/src/events.dart';
 import 'package:todolist/src/logger.dart';
 import 'package:todolist/src/todo_item.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 void main() => runApp(new MyApp());
 
@@ -85,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
         mini: false,
       ),
       body: new Container(
-        child: _listView(),
+        child: _mainData(),
       ),
     );
   }
@@ -131,13 +132,26 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Widget _listView() {
+  _listView() {
+    return ListView.builder(
+      itemCount: _todos.length,
+      itemBuilder: (context, index) {
+        return _todoItemWidget(index);
+      },
+    );
+  }
+
+  Widget _mainData() {
     if (this._todos != null && this._todos.length > 0) {
-      return ListView.builder(
-        itemCount: _todos.length,
-        itemBuilder: (context, index) {
-          return _todoItemWidget(index);
+      return LiquidPullToRefresh(
+        child: _listView(),
+        onRefresh: () {
+          return Future.sync(() {
+            _loadTodos();
+          });
         },
+        key: Key('main_pull_refresh'),
+        showChildOpacityTransition: false,
       );
     } else {
       return Center(
