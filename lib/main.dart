@@ -85,9 +85,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         mini: false,
       ),
-      body: new Container(
-        child: _mainData(),
-      ),
+      body: Builder(
+        builder: (context) {
+          return Container(
+            child: _mainData(context),
+          );
+        },
+      )
     );
   }
 
@@ -127,24 +131,24 @@ class _MyHomePageState extends State<MyHomePage> {
         this._todos.remove(todo);
       });
       Scaffold.of(context).showSnackBar(SnackBar(content: Text('删除成功')));
-    }).catchError(() {
+    }).catchError((error) {
       Scaffold.of(context).showSnackBar(SnackBar(content: Text('删除失败')));
     });
   }
 
-  _listView() {
+  _listView(BuildContext context) {
     return ListView.builder(
       itemCount: _todos.length,
       itemBuilder: (context, index) {
-        return _todoItemWidget(index);
+        return _todoItemWidget(context, index);
       },
     );
   }
 
-  Widget _mainData() {
+  Widget _mainData(BuildContext context) {
     if (this._todos != null && this._todos.length > 0) {
       return LiquidPullToRefresh(
-        child: _listView(),
+        child: _listView(context),
         onRefresh: () {
           return Future.sync(() {
             _loadTodos();
@@ -165,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
         context, MaterialPageRoute(builder: (context) => AddTodoWidget()));
   }
 
-  _todoItemWidget(int index) {
+  _todoItemWidget(BuildContext context, int index) {
     return ToDoItem(
       toDo: _todos[index],
       gestureLongPressCallback: () {

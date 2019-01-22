@@ -101,7 +101,8 @@ class TodoProvider {
   }
 
   Future<int> delete(ToDo todo) async {
-    int row = await db.delete(tableTodo, where: '$columnId = ?', whereArgs: [todo.id]);
+    int row = await db.delete(
+        tableTodo, where: '$columnId = ?', whereArgs: [todo.id]);
     return row;
   }
 
